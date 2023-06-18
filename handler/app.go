@@ -4,6 +4,7 @@ import (
 	"final-project-2/database"
 	"final-project-2/repository/comment_repository/comment_pg"
 	"final-project-2/repository/photo_repository/photo_pg"
+	"final-project-2/repository/socialmedia_repository/socialmedia_pg"
 	"final-project-2/repository/user_repository/user_pg"
 	"final-project-2/service"
 
@@ -26,6 +27,10 @@ func StartApp() {
 	commentRepo := comment_pg.NewCommentPG(db)
 	commentService := service.NewCommentService(commentRepo)
 	commentHandler := NewCommentHandler(commentService)
+
+	socialmediaRepo := socialmedia_pg.NewSocialMediaPG(db)
+	socialmediaService := service.NewSocialmediaService(socialmediaRepo)
+	socialmediaHandler := NewSocialMediaHandler(socialmediaService)
 
 	authService := service.NewAuthService(userRepo)
 
@@ -59,6 +64,16 @@ func StartApp() {
 		commentRoute.GET("/", commentHandler.GetAllCommentByUserId)
 		commentRoute.PUT("/:commentId", commentHandler.UpdateCommentById)
 		commentRoute.DELETE("/:commentId", commentHandler.DeleteCommentById)
+	}
+
+	socialMediaRoute := route.Group("/socialmedias")
+	{
+		socialMediaRoute.Use(authService.Authentication())
+
+		socialMediaRoute.POST("/", socialmediaHandler.CreateNewSocialMedia)
+		socialMediaRoute.GET("/", socialmediaHandler.GetAllSocialMediaByUserId)
+		socialMediaRoute.PUT("/:socialMediaId", socialmediaHandler.UpdateSocialMediaById)
+		socialMediaRoute.DELETE("/:socialMediaId", socialmediaHandler.DeleteSocialMediaById)
 	}
 
 	route.Run()
