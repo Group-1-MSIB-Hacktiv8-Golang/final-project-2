@@ -9,7 +9,6 @@ import (
 )
 
 func StartApp() {
-	var port = "8080"
 	database.InitiliazeDatabase()
 
 	db := database.GetDatabaseInstance()
@@ -32,5 +31,5 @@ func StartApp() {
 		userRoute.DELETE("/", authService.Authentication(), userHandler.DeleteUser)
 	}
 
-	route.Run(":" + port)
+	route.Run()
 }
