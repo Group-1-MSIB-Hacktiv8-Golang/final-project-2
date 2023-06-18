@@ -79,5 +79,5 @@ func (c *commentPG) DeleteCommentById(commentId int) errs.MessageErr {
 		return errs.NewInternalServerError("Database Error")
 	}
 
-	return nil
+	return nil 
 }
