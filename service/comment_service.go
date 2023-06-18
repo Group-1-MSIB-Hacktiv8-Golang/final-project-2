@@ -10,6 +10,10 @@ import (
 
 type CommentService interface {
 	CreateNewComment(payload dto.NewCommentRequest) (*dto.NewCommentResponse, errs.MessageErr)
+	GetAllCommentByUserId(userId int) (*dto.GetAllCommentResponse, errs.MessageErr)
+	UpdateCommentById(commentId int, commentRequest dto.UpdateCommentRequest) (*dto.UpdateCommentResponse, errs.MessageErr)
+
+
 }
 
 type commentService struct {
@@ -49,6 +53,66 @@ func (c *commentService) CreateNewComment(payload dto.NewCommentRequest) (*dto.N
 		Data: dto.NewCommentResponseData{
 			UserId:   comment.UserId,
 			PhotoId:    comment.PhotoId,
+			Message: comment.Message,
+		},
+	}
+
+	return &response, nil
+}
+
+func (c *commentService) GetAllCommentByUserId(userId int) (*dto.GetAllCommentResponse, errs.MessageErr) {
+	comments, err := c.commentRepo.GetAllCommentByUserId(userId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var commentsResponse []dto.GetAllCommentResponseData
+
+	for _, comment := range comments {
+		commentsResponse = append(commentsResponse, dto.GetAllCommentResponseData{
+			Id:        comment.Id,
+			UserId:    comment.UserId,
+			PhotoId:   comment.PhotoId,
+			Message:   comment.Message,
+		})
+	}
+
+	response := dto.GetAllCommentResponse{
+		Result:     "success",
+		StatusCode: 200,
+		Message:    "successfully get all comment",
+		Data:       commentsResponse,
+	}
+
+	return &response, nil
+}
+
+func (c *commentService) UpdateCommentById(commentId int, commentRequest dto.UpdateCommentRequest) (*dto.UpdateCommentResponse, errs.MessageErr) {
+	err := helpers.ValidateStruct(commentRequest)
+
+	if err != nil {
+		return nil, err
+	}
+
+	comment := entity.Comment{
+		Id:       commentId,
+		UserId:   commentRequest.UserId,
+		PhotoId:   commentRequest.PhotoId,
+		Message: commentRequest.Message,
+	}
+
+	err = c.commentRepo.UpdateCommentById(commentId, comment)
+
+	if err != nil {
+		return nil, err
+	}
+
+	response := dto.UpdateCommentResponse{
+		Result:     "success",
+		StatusCode: 200,
+		Message:    "successfully update comment",
+		Data: dto.UpdateCommentResponseData{
 			Message: comment.Message,
 		},
 	}

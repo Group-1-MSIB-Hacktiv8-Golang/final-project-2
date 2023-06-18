@@ -7,4 +7,6 @@ import (
 
 type CommentRepository interface {
 	CreateNewComment(comment entity.Comment) errs.MessageErr
+	GetAllCommentByUserId(userId int) ([]entity.Comment, errs.MessageErr)
+	UpdateCommentById(commentId int, comment entity.Comment) errs.MessageErr
 }

@@ -56,6 +56,8 @@ func StartApp() {
 		commentRoute.Use(authService.Authentication())
 
 		commentRoute.POST("/", commentHandler.CreateNewComment)
+		commentRoute.GET("/", commentHandler.GetAllCommentByUserId)
+		commentRoute.PUT("/:commentId", commentHandler.UpdateCommentById)
 	}
 
 	route.Run()
