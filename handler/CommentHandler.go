@@ -110,3 +110,31 @@ func (c *commentHandler) UpdateCommentById(ctx *gin.Context) {
 	
 	ctx.JSON(result.StatusCode, result)
 }
+
+//DeleteCommentById
+func (c *commentHandler) DeleteCommentById(ctx *gin.Context) {
+	userData, ok := ctx.MustGet("userData").(*entity.User)
+	if !ok {
+		newError := errs.NewBadRequest("Failed to get user data")
+		ctx.JSON(newError.Status(), newError)
+		return
+	}
+
+	fmt.Println("Userdata di handler :", userData)
+
+	commentId, err := helpers.GetParamId(ctx, "commentId")
+
+	if err != nil {
+		ctx.JSON(err.Status(), err)
+		return
+	}
+	
+	result, err := c.commentService.DeleteCommentById(commentId)
+	
+	if err != nil {
+		ctx.JSON(err.Status(), err)
+		return
+	}
+	
+	ctx.JSON(result.StatusCode, result)
+}

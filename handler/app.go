@@ -58,6 +58,7 @@ func StartApp() {
 		commentRoute.POST("/", commentHandler.CreateNewComment)
 		commentRoute.GET("/", commentHandler.GetAllCommentByUserId)
 		commentRoute.PUT("/:commentId", commentHandler.UpdateCommentById)
+		commentRoute.DELETE("/:commentId", commentHandler.DeleteCommentById)
 	}
 
 	route.Run()

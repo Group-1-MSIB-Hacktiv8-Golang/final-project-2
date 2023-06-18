@@ -71,3 +71,13 @@ func (c *commentPG) UpdateCommentById(commentId int, comment entity.Comment) err
 
 	return nil
 }
+
+func (c *commentPG) DeleteCommentById(commentId int) errs.MessageErr {
+	_, err := c.db.Exec("DELETE FROM comments WHERE id = $1", commentId)
+
+	if err != nil {
+		return errs.NewInternalServerError("Database Error")
+	}
+
+	return nil
+}

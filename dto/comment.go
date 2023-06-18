@@ -58,3 +58,9 @@ type UpdateCommentResponse struct {
 type UpdateCommentResponseData struct {
 	Message string `json:"message"`
 }
+
+type DeleteCommentResponse struct {
+	Result     string `json:"result"`
+	StatusCode int    `json:"status_code"`
+	Message    string `json:"message"`
+}

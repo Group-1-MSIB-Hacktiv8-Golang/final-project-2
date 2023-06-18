@@ -12,8 +12,7 @@ type CommentService interface {
 	CreateNewComment(payload dto.NewCommentRequest) (*dto.NewCommentResponse, errs.MessageErr)
 	GetAllCommentByUserId(userId int) (*dto.GetAllCommentResponse, errs.MessageErr)
 	UpdateCommentById(commentId int, commentRequest dto.UpdateCommentRequest) (*dto.UpdateCommentResponse, errs.MessageErr)
-
-
+	DeleteCommentById(commentId int) (*dto.DeleteCommentResponse, errs.MessageErr)
 }
 
 type commentService struct {
@@ -115,6 +114,22 @@ func (c *commentService) UpdateCommentById(commentId int, commentRequest dto.Upd
 		Data: dto.UpdateCommentResponseData{
 			Message: comment.Message,
 		},
+	}
+
+	return &response, nil
+}
+
+func (c *commentService) DeleteCommentById(commentId int) (*dto.DeleteCommentResponse, errs.MessageErr) {
+	err := c.commentRepo.DeleteCommentById(commentId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	response := dto.DeleteCommentResponse{
+		Result:     "success",
+		StatusCode: 200,
+		Message:    "successfully delete comment",
 	}
 
 	return &response, nil
