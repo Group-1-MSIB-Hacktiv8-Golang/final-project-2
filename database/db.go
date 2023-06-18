@@ -9,6 +9,13 @@ import (
 )
 
 var (
+	// host     = "localhost"
+	// port     = "5432"
+	// user     = "postgres"
+	// password = "root"
+	// dbname   = "sosmed"
+	// dialect  = "postgres"
+
 	host     = "containers-us-west-137.railway.app"
 	port     = "5467"
 	user     = "postgres"
@@ -16,7 +23,6 @@ var (
 	dbname   = "railway"
 	dialect  = "postgres"
 )
-
 
 var (
 	db  *sql.DB
@@ -63,7 +69,65 @@ func handleCreateRequiredTables() {
 		);
 	`
 
-	createTableQueries := fmt.Sprintf("%s", userTable)
+	// id (Primary key)
+	// title (string)
+	// caption (string)
+	// photo_url (string)
+	// user_id (Foreign Key Of User Table)
+	// created_at (Date)
+	// updated_at (Date)
+
+	photoTable := `
+		CREATE TABLE IF NOT EXISTS photos (
+			id SERIAL PRIMARY KEY,
+			title TEXT NOT NULL,
+			caption TEXT NOT NULL,
+			photo_url TEXT NOT NULL,
+			user_id INTEGER NOT NULL,
+			created_at timestamptz DEFAULT now(),
+			updated_at timestamptz DEFAULT now(),
+			FOREIGN KEY (user_id) REFERENCES users(id)
+		);
+	`
+
+	// id (Primary Key)
+	// user_id (Foreign Key Of User Table)
+	// photo_id  (Foreign Key Of Photo Table)
+	// message (string)
+	// created_at (Date)
+	// updated_at (Date)
+
+	commentTable := `
+		CREATE TABLE IF NOT EXISTS comments (
+			id SERIAL PRIMARY KEY,
+			user_id INTEGER NOT NULL,
+			photo_id INTEGER NOT NULL,
+			message TEXT NOT NULL,
+			created_at timestamptz DEFAULT now(),
+			updated_at timestamptz DEFAULT now(),
+			FOREIGN KEY (user_id) REFERENCES users(id),
+			FOREIGN KEY (photo_id) REFERENCES photos(id)
+		);
+	`
+
+	// id (Primary Key)
+	// name (String/ varchar)
+	// social_media_url (String/ Text)
+	// UserId(Foreign Key Of User Table)
+
+	socialMediaTable := `
+		CREATE TABLE IF NOT EXISTS social_media (
+			id SERIAL PRIMARY KEY,
+			name TEXT NOT NULL,
+			social_media_url TEXT NOT NULL,
+			user_id INTEGER NOT NULL,
+			created_at timestamptz DEFAULT now(),
+			updated_at timestamptz DEFAULT now(),
+			FOREIGN KEY (user_id) REFERENCES users(id)
+		);
+	`
+
+	createTableQueries := fmt.Sprintf("%s %s %s %s", userTable, photoTable, commentTable, socialMediaTable)
 
 	_, err = db.Exec(createTableQueries)
 
