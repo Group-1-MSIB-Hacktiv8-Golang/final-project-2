@@ -1,1 +1,1 @@
-link railway : https://final-project-2-production-8127.up.railway.app/
+link railway : final-project-2-production-96c9.up.railway.app
