@@ -95,6 +95,11 @@ func (c *commentHandler) UpdateCommentById(ctx *gin.Context) {
 
 	//masukan id user ke newPhotoRequest
 	commentId, err := helpers.GetParamId(ctx, "commentId")
+
+	if err != nil {
+		ctx.JSON(err.Status(), err)
+		return
+	}
 	
 	result, err := c.commentService.UpdateCommentById(commentId, updateCommentRequest)
 	
