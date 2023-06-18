@@ -12,6 +12,8 @@ import (
 type UserService interface {
 	CreateNewUser(payload dto.NewUserRequest) (*dto.NewUserResponse, errs.MessageErr)
 	Login(loginUserRequest dto.LoginUserRequest) (*dto.LoginResponse, errs.MessageErr)
+	UpdateUser(user *entity.User, payload *dto.UpdateUserRequest) (*dto.UpdateUserResponse, errs.MessageErr)
+	DeleteUser(user *entity.User) (*dto.DeleteUserResponse, errs.MessageErr)
 }
 
 type userService struct {
@@ -70,6 +72,8 @@ func (u *userService) CreateNewUser(payload dto.NewUserRequest) (*dto.NewUserRes
 	user := entity.User{
 		Email:    payload.Email,
 		Password: payload.Password,
+		Username: payload.Username,
+		Age:      payload.Age,
 	}
 
 	err = user.HashPassword()
@@ -79,6 +83,7 @@ func (u *userService) CreateNewUser(payload dto.NewUserRequest) (*dto.NewUserRes
 	}
 
 	err = u.userRepo.CreateNewUser(user)
+
 
 	if err != nil {
 		return nil, err
@@ -91,4 +96,47 @@ func (u *userService) CreateNewUser(payload dto.NewUserRequest) (*dto.NewUserRes
 	}
 
 	return &response, nil
+}
+
+
+//UpdateUser
+func (u *userService) UpdateUser(user *entity.User, payload *dto.UpdateUserRequest) (*dto.UpdateUserResponse, errs.MessageErr) {
+
+	newUser := payload.ToEntity()
+
+	updatedUser, err := u.userRepo.UpdateUser(newUser, user.Id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	response := &dto.UpdateUserResponse{
+		Result:     "success",
+		StatusCode: http.StatusOK,
+		Message:    "user updated successfully",
+		Data: dto.UpdateUserResponseData{
+			Id:        updatedUser.Id,
+			Email:     updatedUser.Email,
+			Username:  updatedUser.Username,
+			Age:       updatedUser.Age,
+		},
+	}
+
+	return response, nil
+}
+
+func (u *userService) DeleteUser(user *entity.User) (*dto.DeleteUserResponse, errs.MessageErr) {
+	err := u.userRepo.DeleteUser(user.Id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	response := &dto.DeleteUserResponse{
+		Result:     "success",
+		StatusCode: http.StatusOK,
+		Message:    "user deleted successfully",
+	}
+
+	return response, nil
 }

@@ -18,13 +18,18 @@ func StartApp() {
 	userService := service.NewUserService(userRepo)
 	userHandler := NewUserHandler(userService)
 
+	authService := service.NewAuthService(userRepo)
+
 	route := gin.Default()
 
 	userRoute := route.Group("/users")
 	{
-		userRoute.POST("/register", userHandler.Register)
+		// userRoute.Use(authService.Authentication())
 
+		userRoute.POST("/register", userHandler.Register)
 		userRoute.POST("/login", userHandler.Login)
+		userRoute.PUT("/", authService.Authentication(), userHandler.UpdateUser)
+		userRoute.DELETE("/", authService.Authentication(), userHandler.DeleteUser)
 	}
 
 	route.Run(":" + port)
