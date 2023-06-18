@@ -9,13 +9,14 @@ import (
 )
 
 var (
-	host     = "localhost"
-	port     = "5432"
+	host     = "containers-us-west-137.railway.app"
+	port     = "5467"
 	user     = "postgres"
-	password = "root"
-	dbname   = "sosmed"
+	password = "OvUzYO71UgdqwGpis2Xj"
+	dbname   = "railway"
 	dialect  = "postgres"
 )
+
 
 var (
 	db  *sql.DB
